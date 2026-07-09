@@ -65,6 +65,17 @@ Invite the bot with:
 - `bot`
 - Permission: `Send Messages`, `Embed Links`, `Read Message History`
 
+## Who can use the commands
+
+Only members with a whitelisted role may use the queue commands. Set the
+role IDs (comma-separated) with:
+
+```bash
+ALLOWED_ROLE_IDS=1496697445340545045,1496697894202380540
+```
+
+If unset, it falls back to the two staff role IDs baked into the code.
+
 ## Image Style
 
 Discord embeds can use a big top image, but it must be a public URL. Put your JACKITECT-style banner image URL in:

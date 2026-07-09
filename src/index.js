@@ -1,10 +1,5 @@
 import "dotenv/config";
-import {
-  Client,
-  Events,
-  GatewayIntentBits,
-  PermissionFlagsBits
-} from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import { buildQueueEmbeds } from "./queueEmbed.js";
 import { loadState, saveState } from "./store.js";
 import { registerCommands } from "./registerCommands.js";
@@ -15,8 +10,23 @@ const client = new Client({
 
 let state = await loadState();
 
+const allowedRoleIds = (process.env.ALLOWED_ROLE_IDS ||
+  "1496697445340545045,1496697894202380540")
+  .split(",")
+  .map((id) => id.trim())
+  .filter(Boolean);
+
 function requireStaff(interaction) {
-  return interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild);
+  const roles = interaction.member?.roles;
+  const roleIds = Array.isArray(roles) ? roles : roles?.cache;
+
+  if (!roleIds) {
+    return false;
+  }
+
+  return allowedRoleIds.some((id) =>
+    Array.isArray(roleIds) ? roleIds.includes(id) : roleIds.has(id)
+  );
 }
 
 function getEntry(customerId) {
@@ -88,7 +98,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   try {
     if (!requireStaff(interaction)) {
       await interaction.reply({
-        content: "Only staff with Manage Server permission can update the queue.",
+        content: "You don't have permission to use this command.",
         ephemeral: true
       });
       return;
