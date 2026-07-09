@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import { buildQueueEmbeds } from "./queueEmbed.js";
 import { loadState, saveState } from "./store.js";
+import { registerCommands } from "./registerCommands.js";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
@@ -64,8 +65,19 @@ async function replyDone(interaction, content) {
   await interaction.reply({ content, ephemeral: true });
 }
 
-client.once(Events.ClientReady, (readyClient) => {
+client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Logged in as ${readyClient.user.tag}`);
+
+  try {
+    const { scope, count } = await registerCommands({
+      token: process.env.DISCORD_TOKEN,
+      clientId: process.env.CLIENT_ID || readyClient.user.id,
+      guildId: process.env.GUILD_ID
+    });
+    console.log(`Registered ${count} ${scope} slash commands.`);
+  } catch (error) {
+    console.error("Failed to register slash commands:", error);
+  }
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {

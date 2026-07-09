@@ -25,17 +25,30 @@ CLIENT_ID=...
 GUILD_ID=...
 ```
 
-4. Register the slash commands:
+4. Start the bot:
+
+```bash
+npm start
+```
+
+The bot **registers its slash commands automatically on startup**, so they show up
+in Discord without any extra step. This also means it works on hosts like Railway,
+Render, or Heroku that only run `npm start`.
+
+If `GUILD_ID` is set, commands are registered to that server and appear instantly.
+Without `GUILD_ID`, they are registered globally and can take up to an hour to appear.
+
+You can still register commands manually without starting the bot:
 
 ```bash
 npm run deploy
 ```
 
-5. Start the bot:
+## Deploying on Railway
 
-```bash
-npm start
-```
+Set `DISCORD_TOKEN`, `CLIENT_ID`, and (recommended) `GUILD_ID` as service variables
+in the Railway dashboard, then deploy. Railway runs `npm start`, which logs in and
+registers the slash commands automatically.
 
 ## Discord Developer Portal
 
